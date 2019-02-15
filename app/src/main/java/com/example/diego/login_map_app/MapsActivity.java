@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -55,6 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -69,15 +71,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         //se modifica el tipo de mapa a mostrar
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 
         //habilitar para ubicacion real
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+
+        } else {
+            // Show rationale and request permission.
         }
-        mMap.setMyLocationEnabled(true);
+
+
+
 
         //habilita algunas funciones que bienen desabilitadad en google maps
         UiSettings uiSettings = mMap.getUiSettings();
@@ -87,20 +94,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
+        //recibir el nombre del usuario logeado
+        Intent i = getIntent();
+        String nom = i.getStringExtra("nombre");
 
 
 
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
-
-        //resibir el nombre del usuario logeado
-        Intent i = getIntent();
-        String nom = i.getStringExtra("nombre");
-        Log.e("info", nom);
-
-
         mMap.addMarker(new MarkerOptions().position(sydney).title(nom+" esta aqui!"));
+
+
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
