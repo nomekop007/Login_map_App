@@ -1,8 +1,11 @@
 package com.example.diego.login_map_app;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,20 +34,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-    //preguntar si los servicios de google estan corriendo
+        //preguntar si los servicios de google estan corriendo
 
-        if (status==ConnectionResult.SUCCESS){
+        if (status == ConnectionResult.SUCCESS) {
 
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
 
-        }else{
+        } else {
 
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status,(Activity)getApplicationContext(),10);
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, (Activity) getApplicationContext(), 10);
             dialog.show();
         }
 
+
+        //
 
 
     }
@@ -66,9 +71,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //se modifica el tipo de mapa a mostrar
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-        //habilita algunas funciones que bienen desavilitadad en google maps
+
+        //habilitar para ubicacion real
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+
+        //habilita algunas funciones que bienen desabilitadad en google maps
         UiSettings uiSettings = mMap.getUiSettings();
+
+        //boton de zoom
         uiSettings.setZoomControlsEnabled(true);
+
+
+
+
+
 
 
         // Add a marker in Sydney and move the camera
@@ -83,4 +103,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title(nom+" esta aqui!"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
+
+
+
+
 }
